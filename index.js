@@ -57,68 +57,68 @@ const buildUrl = (options, opt) => {
 
 module.exports = function( options ) {
     const base64_key = nodeBase64.encode(options.key + ':')
+    const baseHeaders = {
+        'Authorization': 'Basic ' + base64_key
+    };
 
     this.post = async (opt) => {
         let url = buildUrl(options, opt);
         let body = opt['body'];
+        let headers = baseHeaders;
+        if(opt['headers']) headers = {...headers, ...opt['headers']};
         let req = await exec({
             url: url,
             method: 'POST',
-            headers: {
-                'Authorization': 'Basic ' + base64_key,
-                'Content-Type': 'application/json'
-            },
-            body: opt['output_format'] === 'JSON' ? JSON.stringify(body) : body
+            headers: headers,
+            body: body
         });
-        return JSON.parse(req['response'])
+        return req['response'];
     };
     this.get = async (opt) => {
         let url = buildUrl(options, opt);
+        let headers = baseHeaders;
+        if(opt['headers']) headers = {...headers, ...opt['headers']};
         let req = await exec({
             url: url,
             method: 'GET',
-            headers: {
-                'Authorization': 'Basic ' + base64_key,
-                'Content-Type': 'application/json'
-            }
+            headers: headers
         });
-        return JSON.parse(req['response'])
+        return req['response'];
     };
     this.head = async (opt) => {
         let url = buildUrl(options, opt);
+        let headers = baseHeaders;
+        if(opt['headers']) headers = {...headers, ...opt['headers']};
         let req = await exec({
             url: url,
             method: 'HEAD',
-            headers: {
-                'Authorization': 'Basic ' + base64_key,
-                'Content-Type': 'application/json'
-            }
+            headers: headers
         });
-        return req.response
+        return req['response'];
     };
     this.put = async (opt) => {
         let url = buildUrl(options, opt);
         let body = opt['body'];
+        let headers = baseHeaders;
+        if(opt['headers']) headers = {...headers, ...opt['headers']};
         let req = await exec({
             url: url,
             method: 'PUT',
-            headers: {
-                'Authorization': 'Basic ' + base64_key,
-                'Content-Type': 'application/json'
-            },
-            body: opt['output_format'] === 'JSON' ? JSON.stringify(body) : body
+            headers: headers,
+            body: body
         });
-        return JSON.parse(req['response'])
+        return req['response'];
     };
     this.delete = async (opt) => {
         let url = buildUrl(options, opt);
+        let headers = baseHeaders;
+        headers['Expect'] = '100-continue';
+        if(opt['headers']) headers = {...headers, ...opt['headers']};
         let req = await exec({
             url: url,
             method: 'DELETE',
-            headers: {
-                Expect: '100-continue'
-            }
+            headers: headers
         });
-        return req.response
+        return req['response'];
     };
 }
